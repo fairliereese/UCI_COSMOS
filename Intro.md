@@ -151,11 +151,28 @@ samtools view /pub/erebboah/cosmos/example_files/Ctrl_0hr_A_Aligned.sortedByCoor
 ```
 
 # Submit a job to HPC
-While the shell script `myscript.sh` we made is executable, it doesn't have enough details to be a proper job that we submit to the HPC scheduler. There are two main types of job schedulers, [SLURM and SGE](https://srcc.stanford.edu/sge-slurm-conversion); we are using SLURM (so named to reference the soda in Futurama).
+While the shell script `myscript.sh` we made is executable, it doesn't have enough details to be a proper job that we submit to the HPC scheduler. There are two main types of job schedulers, [SLURM and SGE](https://srcc.stanford.edu/sge-slurm-conversion); we are using [SLURM](https://rcic.uci.edu/hpc3/slurm.html) (so named to reference the soda in Futurama).
 
 <div>
 <img src="slurm2.png" width="200"/>
 </div>
+
+Let's start with a job to check the quality of our paired-end fastqs. Before we write the script, let's figure it out on the command line with our small sample fastqs. 
+
+We'll be using [fastqc](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/), which is already installed on HPC and can be loaded by `module load fastqc`. Now if you type `fastqc --help` or `fastqc -h`, you should see the manual for the package. To run it on the example fastqs (and using those symlinks from before, if you made them):
+```
+fastqc small_R1.fastq small_R2.fastq
+```
+
+Output files:
+```
+small_R1_fastqc.zip
+small_R1_fastqc.html
+small_R2_fastqc.zip
+small_R2_fastqc.html
+```
+
+Unfortunately HPC no longer supports a web server you can copy the `html` files to, but these are what they look like if you copy them over to your local computer and open them: [R1](http://crick.bio.uci.edu/erebboah/cosmos/small_R1_fastqc.html), [R2](http://crick.bio.uci.edu/erebboah/cosmos/small_R2_fastqc.html).
 
 ```
 #!/bin/bash
