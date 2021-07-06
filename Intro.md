@@ -124,7 +124,7 @@ AAAAA#EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 AACATNGGTCAGTCGGTCCTGAGAGATGGGCGAGTGCCGTTC
 ```
 
-These files aren't too big, so we can also display the entire fastq by `cat small_R1.fastq`. If you're wondering how to look at a compressed fastq, `zcat` is the alternative: `zcat /pub/erebboah/cosmos/C2C12_bulkRNA_timecourse/Ctrl_0hr_A/Ctrl_0hr_A_R1.fastq.gz | head`.
+These files aren't too big, so we can also display the entire fastq by `cat small_R1.fastq`. If you're wondering how to look at a compressed fastq, `zcat` is the alternative: `zcat /pub/erebboah/cosmos/C2C12_bulkRNA_timecourse/fastq/Ctrl_0hr_A/Ctrl_0hr_A_R1.fastq.gz | head`.
 
 ### What do these commands do?
 - `tail small_R1.fastq`
