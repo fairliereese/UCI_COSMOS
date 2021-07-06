@@ -138,6 +138,8 @@ These files aren't too big, so we can also display the entire fastq by `cat smal
 - If you try the `zcat Control_78_Day_0_Rep3_R1.fq.gz` command and forgot to `head`, the whole file will be spat into the terminal. Ctrl + C to abort!
 
 ## SAM/BAM
+There are a multitude of [other](https://genome.ucsc.edu/FAQ/FAQformat.html) file formats beyond just raw fastqs.
+
 Aligned sequences are stored in a Sequence Alignment Map or [SAM](https://www.metagenomics.wiki/tools/samtools/bam-sam-file-format) file which is much more complicated than a fastq but also stores a lot more information. 
 
 A BAM file is simply the binary (compressed) version of a SAM file. These files can be very very big so most operations are done on the binary files. This means you can't use `head` to look at them, and `zcat` is only used for gzipped files.
@@ -150,6 +152,9 @@ samtools --help # what commands are available
 samtools view --help # how to use a specific command, what the options are
 samtools view /pub/erebboah/cosmos/example_files/Ctrl_0hr_A_Aligned.sortedByCoord.out.bam | head
 ```
+
+## Bed
+A `.bed` file at its most basic is only 3 columns in a tab-delimited text file: chromosome, start coordinate, and end coordinate, with one line for each genomic region. There are 9 additional fields such as name and strand. Like samtools, there is also a suite of tools called [bedtools](https://bedtools.readthedocs.io/en/latest/) for working with bed files.
 
 # Submit a job to HPC
 While the shell script `myscript.sh` we made is executable, it doesn't have enough details to be a proper job that we submit to the HPC scheduler. There are two main types of job schedulers, [SLURM and SGE](https://srcc.stanford.edu/sge-slurm-conversion); we are using [SLURM](https://rcic.uci.edu/hpc3/slurm.html) (so named to reference the soda in Futurama).
