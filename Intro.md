@@ -97,7 +97,7 @@ You just made a [shell script](https://en.wikipedia.org/wiki/Shell_script)! Run 
 ## Fastq
 Raw sequencing data is stored in [fastqs](https://support.illumina.com/bulletins/2016/04/fastq-files-explained.html) where each read is represented by 4 lines: a sequence identifier with run information, the sequence itself, a separator (usually a + sign), and the base call [quality scores](https://support.illumina.com/help/BaseSpace_OLH_009008/Content/Source/Informatics/BS/QualityScoreEncoding_swBS.htm) as ASCII characters.
 
-We have some data from an Illumina paired-end bulk RNA-seq timecourse of a differentiating skeletal muscle cell line (C2C12). I took just the first 1000 reads (4000 lines) from the undifferentiated control cells to make small read 1: `/pub/erebboah/cosmos/example_files/small_R1.fastq` and read 2: `/pub/erebboah/cosmos/example_files/small_R2.fastq` fastqs. The full timecourse of compressed fastqs are in `/pub/erebboah/cosmos/C2C12_bulkRNA_timecourse/fastq`. These file paths are annoying to type out, so let's make symlinks to the data that's stored in my public directory using `ln -s`:
+We have some data from an Illumina paired-end bulk RNA-seq experiment of human control and FSHD2 patient muscle cells, undifferentiated and differentiated for 3 days. I took just the first 1000 reads (4000 lines) from the undifferentiated control cells to make small read 1: `/pub/erebboah/cosmos/example_files/small_R1.fastq` and read 2: `/pub/erebboah/cosmos/example_files/small_R2.fastq` fastqs. The full dataset of compressed fastqs are in `/pub/namvn1/COSMO/RNA_Seq/`. These file paths are annoying to type out, so let's make symlinks to the data that's stored in my public directory using `ln -s`:
 
 ```
 ln -s /pub/erebboah/cosmos/example_files/small_R1.fastq
@@ -113,16 +113,16 @@ Now once you `ls -l` in your own directory you'll see these links which are poin
 The `head` command is useful to look at the first 10 lines of (uncompressed) files. Let's look at some raw data by `head small_R1.fastq`:
 
 ```
-@NS500169:786:H7N2GBGXG:1:11101:6344:1027 1:N:0:CGTACT
-GAGCTNGAGGAACTGAGGAACGAACATTCTGCTCGCTTCAAG
+@NS500169:562:HJ5C3BGXB:1:11101:18653:1034 1:N:0:TAAGGC
+AGTAANTACAATAGGACCTTCCTTCCATATTTGTCATTTACTA
 +
-AAAAA#EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-@NS500169:786:H7N2GBGXG:1:11101:11801:1029 1:N:0:CGTACT
-GAAAGNGGGCCGCCCTCTCGCCCGTCACGTTGAACGCACGTT
+A6AA/#AEEEE/E/EEE/EEEE//<<E/EEEA/AE</EEAEEE
+@NS500169:562:HJ5C3BGXB:1:11101:6749:1035 1:N:0:TAAGGC
+GCCTCNTAGCATGTTTTTCTTCATAGATACCCGTTTTGGGGTT
 +
-AAAAA#EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-@NS500169:786:H7N2GBGXG:1:11101:12004:1033 1:N:0:CGTACT
-AACATNGGTCAGTCGGTCCTGAGAGATGGGCGAGTGCCGTTC
+AAAAA#EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+@NS500169:562:HJ5C3BGXB:1:11101:4133:1036 1:N:0:TAAGGC
+AGTCANGAGGGTGGGGCCCAGGCAGCTGGTGCAGGCAGGCCAG
 ```
 
 These files aren't too big, so we can also display the entire fastq by `cat small_R1.fastq`. If you're wondering how to look at a compressed fastq, `zcat` is the alternative: `zcat /pub/namvn1/COSMO/RNA_Seq/Control_78_Day_0_Rep3_R1.fq.gz | head`.
@@ -135,7 +135,7 @@ These files aren't too big, so we can also display the entire fastq by `cat smal
 
 ### Tips:
 - `|` is the pipe symbol which connects the output of one process to the input of another process  
-- If you try the `zcat Control_78_Day_0_Rep3_R1.fq.gz` command and forgot to `head`, the whole file will spat into terminal. Ctrl + C to abort!
+- If you try the `zcat Control_78_Day_0_Rep3_R1.fq.gz` command and forgot to `head`, the whole file will be spat into the terminal. Ctrl + C to abort!
 
 ## SAM/BAM
 Aligned sequences are stored in a Sequence Alignment Map or [SAM](https://www.metagenomics.wiki/tools/samtools/bam-sam-file-format) file which is much more complicated than a fastq but also stores a lot more information. 
