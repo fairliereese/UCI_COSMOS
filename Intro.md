@@ -65,7 +65,7 @@ You may not have any files yet so let's make one! `touch myfile.txt` creates an 
 - `cd ../`
 - `rm new_folder/`
 
-That last one will give you an error - `rm: cannot remove ‘new_folder/’: Is a directory`. Some commands like `rm` and `cp` need you to specify that you want to remove or copy a folder, so you need to add the `-r` option: `rm -r new_folder`. **Be very careful with the `rm` command!** You won't be asked if you're sure you want to delete and there is no recycling bin/trash can!
+That last one will give you an error - `rm: cannot remove ‘new_folder/’: Is a directory`. Some commands like `rm` and `cp` need you to specify that you want to remove or copy a folder, so you need to add the `-r` option: `rm -r new_folder`. **Be [very careful](https://www.quora.com/Linux/What-are-some-crazy-rm-rf-stories-you-have-heard-about) with the `rm` command!** You won't be asked if you're sure you want to delete and there is no recycling bin/trash can!
 
 ### Tips:
 -`..` represents one directory above the directory you're currently in  
