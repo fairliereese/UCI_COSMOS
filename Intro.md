@@ -135,7 +135,7 @@ These files aren't too big, so we can also display the entire fastq by `cat smal
 
 ### Tips:
 - `|` is the pipe symbol which connects the output of one process to the input of another process  
-- If you try the `zcat Ctrl_0hr_A_R1.fastq.gz` command and forgot to `head`, the whole file will spat into terminal- Ctrl + C to abort!
+- If you try the `zcat Ctrl_0hr_A_R1.fastq.gz` command and forgot to `head`, the whole file will spat into terminal. Ctrl + C to abort!
 
 ## SAM/BAM
 Aligned sequences are stored in a Sequence Alignment Map or [SAM](https://www.metagenomics.wiki/tools/samtools/bam-sam-file-format) file which is much more complicated than a fastq but also stores a lot more information. 
