@@ -232,7 +232,7 @@ outpath=/data/homezvol2/erebboah/fshd_rnaseq/
 This is where it gets interesting. Try entering the following in the command line, except replacing [`$SLURM_ARRAY_TASK_ID`](https://slurm.schedmd.com/job_array.html) (which is a variable that gets automatically created) with 1. 
 
 ```
-file=samples.txt 
+file=prefixes.txt 
 inpath=/pub/namvn1/COSMO/RNA_Seq/
 sample=`head -n $SLURM_ARRAY_TASK_ID $file | tail -n 1`
 ```
