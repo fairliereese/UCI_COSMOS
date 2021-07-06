@@ -200,7 +200,7 @@ outpath=fshd_rnaseq/qc
 fastqc small_R1.fastq small_R2.fastq -o $outpath
 ```
 
-There are `ls /pub/namvn1/COSMO/RNA_Seq/*.fq.gz| wc -l` 16 samples in the FSHD experiment, so it would be tedious to run the `fastqc` line over and over. Job arrays can launch multiple scripts all at once for different samples. We will make use of a `samples.txt` file in the same directory as our scripts with the names of the samples we want to process at once.  
+There are `ls /pub/namvn1/COSMO/RNA_Seq/*.fq.gz| wc -l` 16 fastqs (8 samples) in the FSHD experiment, so it would be tedious to run the `fastqc` line over and over. Job arrays can launch multiple scripts all at once for different samples. We will make use of a `samples.txt` file in the same directory as our scripts with the names of the samples we want to process at once.  
 
 ```
 cat /pub/namvn1/COSMO/RNA_Seq/prefixes.txt
@@ -285,7 +285,7 @@ cd fshd_rnaseq/scripts
 cp /pub/erebboah/cosmos/fshd_rnaseq/scripts/run_kallisto.sh .
 vi run_kallisto.sh
 ```
-You only need to change one line to output the results in your personal directory! (And `--array=1-2`; make sure it works first then feel free to map all 16 `--array=1-16`).
+You only need to change one line to output the results in your personal directory! (And `--array=1-2`; make sure it works first then feel free to map all 8 `--array=1-8`).
 
 # Day 1 Goals
 - Log on to HPC3
