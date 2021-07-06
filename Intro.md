@@ -286,12 +286,13 @@ fastqc ${inpath}${sample}_R1.fastq.gz ${inpath}${sample}_R2.fastq.gz -o ${outpat
 Make a new file and copy-paste the above code. Play around with which samples to QC check (`--array=` can be anything from 1-35). Submit the job to SLURM by `sbatch your_fastqc_job.sh` and check its status by `squeue -u $USER` (or your username, `squeue -u erebboah`). Check the contents of the `.out` and `.err` files.
 
 ## Run mapping bash script
-We have two scripts to align bulk RNA-seq data here: `/pub/namvn1/COSMO/RNA_Seq/run_STAR.sh` and here: `/pub/erebboah/cosmos/C2C12_bulkRNA_timecourse/scripts/run_kallisto.sh`. One uses the [STAR](https://github.com/alexdobin/STAR) aligner with human control and FSHD patient data and one uses the [kallisto](https://pachterlab.github.io/kallisto/about) pseudo-aligner with mouse C2C12 timecourse data.
+We have two scripts to align bulk RNA-seq data here: `/pub/namvn1/COSMO/RNA_Seq/run_STAR.sh` and here: `/pub/erebboah/cosmos/C2C12_bulkRNA_timecourse/scripts/run_kallisto.sh`. One uses the [STAR](https://github.com/alexdobin/STAR) aligner with human control and FSHD patient data and one uses the [kallisto](https://pachterlab.github.io/kallisto/about) pseudo-aligner with mouse C2C12 timecourse data. We have a human STAR index already made here `/pub/namvn1/COSMO/genome_ref/hg38` and a kallisto mouse index already made here `/pub/erebboah/cosmos/C2C12_bulkRNA_timecourse/ref/mm10.idx`.
 
 #### Kallisto script:
 ```
 cd c2c12_rnaseq_timecourse/scripts
 cp /pub/erebboah/cosmos/C2C12_bulkRNA_timecourse/scripts/run_kallisto.sh .
+vi run_kallisto.sh
 ```
 You only need to change one line to output the results in your personal directory! (And `--array=1-2`; make sure it works first then feel free to map all 35 `--array=1-35`).
 
