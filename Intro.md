@@ -96,7 +96,7 @@ Run the script by `bash myscript.sh`!
 ## Fastq
 Raw sequencing data is stored in [fastqs](https://support.illumina.com/bulletins/2016/04/fastq-files-explained.html) where each read is represented by 4 lines: a sequence identifier with run information, the sequence itself, a separator (usually a + sign), and the base call [quality scores](https://support.illumina.com/help/BaseSpace_OLH_009008/Content/Source/Informatics/BS/QualityScoreEncoding_swBS.htm) as ASCII characters.
 
-We have some data from an Illumina paired-end bulk RNA-seq timecourse of a differentiating skeletal muscle cell line (C2C12). I took just the first 1000 reads (4000 lines) from the undifferentiated control cells to make small read 1: `/pub/erebboah/cosmos/example_files/small_R1.fastq` and read 2: `/pub/erebboah/cosmos/example_files/small_R2.fastq` fastqs. The full timecourse of compressed fastqs are in `/pub/erebboah/cosmos/C2C12_bulkRNA_timecourse`. These file paths are annoying to type out, so let's make symlinks to the data that's stored in my public directory using `ln -s`:
+We have some data from an Illumina paired-end bulk RNA-seq timecourse of a differentiating skeletal muscle cell line (C2C12). I took just the first 1000 reads (4000 lines) from the undifferentiated control cells to make small read 1: `/pub/erebboah/cosmos/example_files/small_R1.fastq` and read 2: `/pub/erebboah/cosmos/example_files/small_R2.fastq` fastqs. The full timecourse of compressed fastqs are in `/pub/erebboah/cosmos/C2C12_bulkRNA_timecourse/fastq`. These file paths are annoying to type out, so let's make symlinks to the data that's stored in my public directory using `ln -s`:
 
 ```
 ln -s /pub/erebboah/cosmos/example_files/small_R1.fastq
