@@ -233,8 +233,8 @@ This is where it gets interesting. Try entering the following in the command lin
 
 ```
 file=samples.txt 
-inpath=`head -n $SLURM_ARRAY_TASK_ID $file | tail -n 1`
-sample=`basename $inpath` # basename is a useful little command for the way I like to organize my data
+inpath=/pub/namvn1/COSMO/RNA_Seq/
+sample=`head -n $SLURM_ARRAY_TASK_ID $file | tail -n 1`
 ```
 
 ### What do these commands output?
@@ -256,14 +256,15 @@ Altogether, this is our array job for fastq QC:
 #SBATCH --job-name=fastqc       
 #SBATCH -p free                  
 #SBATCH --nodes=1                
-#SBATCH --array=1-3              
+#SBATCH --array=1-2              
 #SBATCH --cpus-per-task=1        
 #SBATCH --output=fastqc-%J.out   
 #SBATCH --error=fastqc-%J.err    
 
 module load fastqc
 
-outpath=/data/homezvol2/erebboah/c2c12_rnaseq_timecourse/
+inpath=/pub/namvn1/COSMO/RNA_Seq/
+outpath=/data/homezvol2/erebboah/fshd_rnaseq/
 
 file=samples.txt 
 inpath=`head -n $SLURM_ARRAY_TASK_ID $file | tail -n 1`
@@ -276,7 +277,7 @@ fastqc ${inpath}${sample}_R1.fastq.gz ${inpath}${sample}_R2.fastq.gz -o ${outpat
 Make a new file and copy-paste the above code. Play around with which samples to QC check (`--array=` can be anything from 1-35). Submit the job to SLURM by `sbatch your_fastqc_job.sh` and check its status by `squeue -u $USER` (or your username, `squeue -u erebboah`). Check the contents of the `.out` and `.err` files.
 
 ## Run mapping bash script
-We have two scripts to align bulk RNA-seq data here: `/pub/namvn1/COSMO/RNA_Seq/run_STAR.sh` and here: `/pub/erebboah/cosmos/FSHD_RNAseq/scripts/run_kallisto.sh`. One uses the [STAR](https://github.com/alexdobin/STAR) aligner with human control and FSHD patient data and one uses the [kallisto](https://pachterlab.github.io/kallisto/about) pseudo-aligner with mouse C2C12 timecourse data. We have a human STAR index already made here `/pub/namvn1/COSMO/genome_ref/hg38` and a kallisto mouse index already made here `/pub/erebboah/cosmos/FSHD_RNAseq/ref/hg38.idx` for you to use.
+We have two scripts to align bulk RNA-seq data here: `/pub/namvn1/COSMO/RNA_Seq/run_STAR.sh` and here: `/pub/erebboah/cosmos/FSHD_bulkRNA/scripts/run_kallisto.sh`. One uses the [STAR](https://github.com/alexdobin/STAR) aligner with and one uses the [kallisto](https://pachterlab.github.io/kallisto/about) pseudo-aligner. We have a human STAR index already made here `/pub/namvn1/COSMO/genome_ref/hg38` and a human kallisto index already made here `/pub/erebboah/cosmos/FSHD_bulkRNA/ref/hg38.idx` for you to use.
 
 #### Kallisto script:
 ```
@@ -284,7 +285,7 @@ cd fshd_rnaseq/scripts
 cp /pub/erebboah/cosmos/fshd_rnaseq/scripts/run_kallisto.sh .
 vi run_kallisto.sh
 ```
-You only need to change one line to output the results in your personal directory! (And `--array=1-2`; make sure it works first then feel free to map all 35 `--array=1-35`).
+You only need to change one line to output the results in your personal directory! (And `--array=1-2`; make sure it works first then feel free to map all 16 `--array=1-16`).
 
 # Day 1 Goals
 - Log on to HPC3
