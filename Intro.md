@@ -125,7 +125,7 @@ AAAAA#EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 AACATNGGTCAGTCGGTCCTGAGAGATGGGCGAGTGCCGTTC
 ```
 
-These files aren't too big, so we can also display the entire fastq by `cat small_R1.fastq`. If you're wondering how to look at a compressed fastq, `zcat` is the alternative: `zcat /pub/erebboah/cosmos/C2C12_bulkRNA_timecourse/fastq/Ctrl_0hr_A/Ctrl_0hr_A_R1.fastq.gz | head`.
+These files aren't too big, so we can also display the entire fastq by `cat small_R1.fastq`. If you're wondering how to look at a compressed fastq, `zcat` is the alternative: `zcat /pub/namvn1/COSMO/RNA_Seq/Control_78_Day_0_Rep3_R1.fq.gz | head`.
 
 ### What do these commands do?
 - `tail small_R1.fastq`
@@ -135,7 +135,7 @@ These files aren't too big, so we can also display the entire fastq by `cat smal
 
 ### Tips:
 - `|` is the pipe symbol which connects the output of one process to the input of another process  
-- If you try the `zcat Ctrl_0hr_A_R1.fastq.gz` command and forgot to `head`, the whole file will spat into terminal. Ctrl + C to abort!
+- If you try the `zcat Control_78_Day_0_Rep3_R1.fq.gz` command and forgot to `head`, the whole file will spat into terminal. Ctrl + C to abort!
 
 ## SAM/BAM
 Aligned sequences are stored in a Sequence Alignment Map or [SAM](https://www.metagenomics.wiki/tools/samtools/bam-sam-file-format) file which is much more complicated than a fastq but also stores a lot more information. 
@@ -177,7 +177,7 @@ If you copy the `html` files over to your local computer and open them, they loo
 
 So far we've just been playing around without setting up any kind of directory structure. Everyone has a different organizational structure, but a basic directory structure for an RNA-seq project could look like this:
 ```
-c2c12_rnaseq_timecourse/
+fshd_rnaseq/
 	ref/
 	fastq/ 
 	qc/
@@ -190,26 +190,23 @@ We just need `qc` for now.
 
 Use the `-o` option to output the results to the `qc` directory.
 ```
-mkdir -p c2c12_rnaseq_timecourse/qc
-fastqc small_R1.fastq small_R2.fastq -o c2c12_rnaseq_timecourse/qc
+mkdir -p fshd_rnaseq/qc
+fastqc small_R1.fastq small_R2.fastq -o fshd_rnaseq/qc
 ```
 
 You can make variables in bash just like any other programming language. When you want bash to expand an environment variable, it needs $ in front of it. Let's make the output directory a variable so we don't have to keep typing it:
 ```
-outpath=c2c12_rnaseq_timecourse/qc
+outpath=fshd_rnaseq/qc
 fastqc small_R1.fastq small_R2.fastq -o $outpath
 ```
 
-There are `ls /pub/erebboah/cosmos/C2C12_bulkRNA_timecourse/fastq | wc -l` 35 samples in the C2C12 bulk timecourse, so it would be tedious to run the `fastqc` line over and over. Job arrays can launch multiple scripts all at once for different samples. I like to make use of a `samples.txt` file in the same directory as my script with the locations of the samples I want to process at once.  
+There are `ls /pub/namvn1/COSMO/RNA_Seq/*.fq.gz| wc -l` 16 samples in the FSHD experiment, so it would be tedious to run the `fastqc` line over and over. Job arrays can launch multiple scripts all at once for different samples. We will make use of a `samples.txt` file in the same directory as our scripts with the names of the samples we want to process at once.  
 
 ```
-mkdir c2c12_rnaseq_timecourse/scripts
-cd c2c12_rnaseq_timecourse/scripts
-ls -d /pub/erebboah/cosmos/C2C12_bulkRNA_timecourse/fastq/*/ > samples.txt
-cat samples.txt
+cat /pub/namvn1/COSMO/RNA_Seq/prefixes.txt
 ```
 
-There are some [lines](https://hpc-support.lboro.ac.uk/slurm-nodes-cpus-tasks.html) to add to the header that begin with `#SBATCH` to tell SLURM which partition to use, how many nodes to use, how many cores of each node to use, and how many tasks to launch, in addition to the optional job name and output/error log files. [More helpful info](https://hpc-support.lboro.ac.uk/slurm-job-scripts.html). This is computationally inexpensive and quick so I'm using the minimum number of nodes and cores and the free partition and risking my jobs getting killed. `#SBATCH --array=1-3` means I'm only going to process the first 3 samples in samples.txt, for testing/demo purposes.
+There are some [lines](https://hpc-support.lboro.ac.uk/slurm-nodes-cpus-tasks.html) to add to the header that begin with `#SBATCH` to tell SLURM which partition to use, how many nodes to use, how many cores of each node to use, and how many tasks to launch, in addition to the optional job name and output/error log files. [More helpful info](https://hpc-support.lboro.ac.uk/slurm-job-scripts.html). This is computationally inexpensive and quick so I'm using the minimum number of nodes and cores and the free partition and risking my jobs getting killed. `#SBATCH --array=1-3` means I'm only going to process the first 3 samples in prefixes.txt, for testing/demo purposes.
 
 ```
 #!/bin/bash
@@ -229,7 +226,7 @@ module load fastqc
 
 We did this before, but it's a good idea to include **full paths** instead of relative paths in your job scripts.
 ```
-outpath=/data/homezvol2/erebboah/c2c12_rnaseq_timecourse/
+outpath=/data/homezvol2/erebboah/fshd_rnaseq/
 ```
 
 This is where it gets interesting. Try entering the following in the command line, except replacing [`$SLURM_ARRAY_TASK_ID`](https://slurm.schedmd.com/job_array.html) (which is a variable that gets automatically created) with 1. 
@@ -243,8 +240,8 @@ sample=`basename $inpath` # basename is a useful little command for the way I li
 ### What do these commands output?
 1. `echo $inpath`
 2. `echo $sample`
-3. `echo ${inpath}${sample}_R1.fastq.gz`
-4. `echo ${inpath}${sample}_R2.fastq.gz`
+3. `echo ${inpath}${sample}_R1.fq.gz`
+4. `echo ${inpath}${sample}_R2.fq.gz`
 
 The last two are the path to the full compressed read 1 and read 2 fastqs for the first sample. If you try 2, the paths will be pointed towards the second sample in samples.txt, the third sample for 3, etc. This is exactly what will happen in each arrayed job; the `SLURM_ARRAY_TASK_ID` will range from whatever numbers you enter into `--array=`.
 
@@ -279,12 +276,12 @@ fastqc ${inpath}${sample}_R1.fastq.gz ${inpath}${sample}_R2.fastq.gz -o ${outpat
 Make a new file and copy-paste the above code. Play around with which samples to QC check (`--array=` can be anything from 1-35). Submit the job to SLURM by `sbatch your_fastqc_job.sh` and check its status by `squeue -u $USER` (or your username, `squeue -u erebboah`). Check the contents of the `.out` and `.err` files.
 
 ## Run mapping bash script
-We have two scripts to align bulk RNA-seq data here: `/pub/namvn1/COSMO/RNA_Seq/run_STAR.sh` and here: `/pub/erebboah/cosmos/C2C12_bulkRNA_timecourse/scripts/run_kallisto.sh`. One uses the [STAR](https://github.com/alexdobin/STAR) aligner with human control and FSHD patient data and one uses the [kallisto](https://pachterlab.github.io/kallisto/about) pseudo-aligner with mouse C2C12 timecourse data. We have a human STAR index already made here `/pub/namvn1/COSMO/genome_ref/hg38` and a kallisto mouse index already made here `/pub/erebboah/cosmos/C2C12_bulkRNA_timecourse/ref/mm10.idx` for you to use.
+We have two scripts to align bulk RNA-seq data here: `/pub/namvn1/COSMO/RNA_Seq/run_STAR.sh` and here: `/pub/erebboah/cosmos/FSHD_RNAseq/scripts/run_kallisto.sh`. One uses the [STAR](https://github.com/alexdobin/STAR) aligner with human control and FSHD patient data and one uses the [kallisto](https://pachterlab.github.io/kallisto/about) pseudo-aligner with mouse C2C12 timecourse data. We have a human STAR index already made here `/pub/namvn1/COSMO/genome_ref/hg38` and a kallisto mouse index already made here `/pub/erebboah/cosmos/FSHD_RNAseq/ref/hg38.idx` for you to use.
 
 #### Kallisto script:
 ```
-cd c2c12_rnaseq_timecourse/scripts
-cp /pub/erebboah/cosmos/C2C12_bulkRNA_timecourse/scripts/run_kallisto.sh .
+cd fshd_rnaseq/scripts
+cp /pub/erebboah/cosmos/fshd_rnaseq/scripts/run_kallisto.sh .
 vi run_kallisto.sh
 ```
 You only need to change one line to output the results in your personal directory! (And `--array=1-2`; make sure it works first then feel free to map all 35 `--array=1-35`).
