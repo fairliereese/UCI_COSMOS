@@ -294,7 +294,7 @@ You only need to change one line to output the results in your personal director
 - Practice basic Unix commands
 - Practice using `vi` to write a simple bash script
 - Learn about bioinformatics data formats: `.fastq`, `.sam`, `.bam`
-- Submit a job to quality check a fastq and/or align bulk RNA-seq data
+- Submit a job to quality check fastq files and/or align bulk RNA-seq data
 
 # Homework
 - Download a free file transfer protocol (FTP) application such as [FileZilla](https://filezilla-project.org/) or [Cyberduck](https://cyberduck.io/)
