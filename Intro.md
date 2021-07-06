@@ -48,7 +48,7 @@ A terminal is a lot different than the graphical user interfaces [(GUIs)](https:
 <img src="whereami.png" width="750"/>
 </div>
 
-`ls` lists the contents of a directory and has several useful options like `-l` for long format to see more information like the file type, permissions, owner, size, and date created. Permissions are important but we don't have time to get into them (unless we run into problems)...More info on permissions [here](https://linuxcommand.org/lc3_lts0090.php).
+`ls` lists the contents of a directory and has several useful options like `-l` for long format to see more information like the file type, permissions, owner, size, and date created. Permissions include read (r), write (w), and execute (x) for the owner, group of related users, and everyone else. For example, `rwxrwxrwx` means everyone can read, write, and execute the file, while `rw-rw-r--` means the owner and users in the group can read and write it while users outside the group can read but cannot write it. More info on permissions [here](https://linuxcommand.org/lc3_lts0090.php).
 
 Other useful `ls` options I use frequently: `-h` for human readable file sizes, `-t` to sort by time, earliest to latest; e.g. `ls -lth`.
 
@@ -81,7 +81,7 @@ Type `vi myscript.sh` to enter the basic Unix text editor. (Notice that it will 
 <img src="vi.png" width="750"/>
 </div>
 
-Type `i` to start inserting text. Copy paste this `#!/bin/bash` line called a [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)) to make an executable program, then type `echo "Hello world!"`.
+Type `i` to start inserting text. Copy paste this `#!/bin/bash` line called a [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)) to make an executable program, then type `echo "Hello world!"`. 
 
 <div>
 <img src="babyscript.png" width="750"/>
@@ -89,7 +89,7 @@ Type `i` to start inserting text. Copy paste this `#!/bin/bash` line called a [s
 
 Get out of insert mode by hitting the escape key, then close the editor and write to the file by typing `:wq`. To quit without writing, `:q!`, or `:q` if nothing was changed. (You'll get an error `No write since last change (add ! to override)` if you use `:q` after changing the file.)
 
-Run the script by `bash myscript.sh`!
+You just made a [shell script](https://en.wikipedia.org/wiki/Shell_script)! Run the script by `bash myscript.sh`. You can also make the script executable without having to use the `bash` command by changing its permissions: `chmod +x myscript.sh`. This allows you to simply type `./myscript.sh` to run it. The permissions changed from `rw-rw-r--` to `rwxrwxr-x`, meaning everyone can now execute your script.
 
 # Bioinformatics data formats
 
@@ -150,12 +150,44 @@ samtools view --help # how to use a specific command, what the options are
 samtools view /pub/erebboah/cosmos/example_files/Ctrl_0hr_A_Aligned.sortedByCoord.out.bam | head
 ```
 
+# Submit a job to HPC
+While the shell script `myscript.sh` we made is executable, it doesn't have enough details to be a proper job that we submit to the HPC scheduler. There are two main types of job schedulers, [SLURM and SGE](https://srcc.stanford.edu/sge-slurm-conversion); we are using SLURM (so named to reference the soda in Futurama).
+
+<div>
+<img src="slurm.png" width="750"/>
+</div>
+
+```
+#!/bin/bash
+#SBATCH --job-name=fastqc         ## Name of the job
+#SBATCH -p free                   ## partition/queue name
+#SBATCH --nodes=1                 ## (-N) number of nodes to use
+#SBATCH --cpus-per-task=1         ## number of cores the job needs
+#SBATCH --output=fastqc-%J.out    ## output log file
+#SBATCH --error=fastqc-%J.err     ## error log file
+
+module load fastqc
+
+inpath=/pub/erebboah/cosmos/C2C12_bulkRNA_timecourse/
+outpath=/data/homezvol2/erebboah/c2c12_timecourse/
+sample=$1
+
+read_1=${inpath}/fastq/${sample}/*_R1.fastq.gz 
+read_2=${inpath}/fastq/${sample}/*_R2.fastq.gz 
+
+mkdir ${outpath}fastqc/
+mkdir ${outpath}fastqc/${sample}
+
+fastqc ${inpath}fastq/${sample}/${sample}_R1.fastq.gz ${inpath}fastq/${sample}/${sample}_R2.fastq.gz -o \
+	${outpath}fastqc/${sample}
+```
+
 # Day 1 Goals
 - Log on to HPC3
 - Practice basic Unix commands
 - Practice using `vi` to write a simple bash script
 - Learn about bioinformatics data formats: `.fastq`, `.sam`, `.bam`
-- (Maybe) Submit a job to align bulk RNA-seq data
+- Submit a job to quality check a fastq and/or align bulk RNA-seq data
 
 # Homework
 - Download a free file transfer protocol (FTP) application such as [FileZilla](https://filezilla-project.org/) or [Cyberduck](https://cyberduck.io/)
@@ -163,6 +195,7 @@ samtools view /pub/erebboah/cosmos/example_files/Ctrl_0hr_A_Aligned.sortedByCoor
 
 # Useful links
 [How to use vi](https://www.tutorialspoint.com/unix/unix-vi-editor.htm)  
+[Bash shell script tutorial](https://linuxconfig.org/bash-scripting-tutorial-for-beginners)
 [UCI HPC3 page](https://rcic.uci.edu/hpc3/index.html)  
 [Long but thorough Unix tutorial](https://www.meted.ucar.edu/ucar/unix/navmenu.php)  
 [Google is your best friend](https://www.google.com/)  
