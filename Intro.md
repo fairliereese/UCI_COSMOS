@@ -281,7 +281,7 @@ fastqc ${inpath}${sample}_R1.fastq.gz ${inpath}${sample}_R2.fastq.gz -o ${outpat
 ```
 
 ## Run fastqc bash script
-Make a new file and copy-paste the above code. Submit the job to SLURM by `sbatch your_fastqc_job_name.sh` and check its status by `squeue -u $USER` (or your username, `squeue -u erebboah`).
+Make a new file and copy-paste the above code. Play around with which samples to QC check (`--array=` can be anything from 1-35). Submit the job to SLURM by `sbatch your_fastqc_job.sh` and check its status by `squeue -u $USER` (or your username, `squeue -u erebboah`).
 
 ## Run mapping bash script
 
