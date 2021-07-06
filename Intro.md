@@ -280,8 +280,10 @@ sample=`basename $inpath`
 fastqc ${inpath}${sample}_R1.fastq.gz ${inpath}${sample}_R2.fastq.gz -o ${outpath}qc/
 ```
 
-### Run fastqc bash script
-Make a new file and copy-paste the above code.
+## Run fastqc bash script
+Make a new file and copy-paste the above code. Submit the job to SLURM by `sbatch your_fastqc_job_name.sh` and check its status by `squeue -u $USER` (or your username, `squeue -u erebboah`).
+
+## Run mapping bash script
 
 # Day 1 Goals
 - Log on to HPC3
