@@ -267,8 +267,8 @@ inpath=/pub/namvn1/COSMO/RNA_Seq/
 outpath=/data/homezvol2/erebboah/fshd_rnaseq/
 
 file=samples.txt 
-inpath=`head -n $SLURM_ARRAY_TASK_ID $file | tail -n 1`
-sample=`basename $inpath`
+inpath=/pub/namvn1/COSMO/RNA_Seq/
+sample=`head -n $SLURM_ARRAY_TASK_ID $file | tail -n 1`
 
 fastqc ${inpath}${sample}_R1.fastq.gz ${inpath}${sample}_R2.fastq.gz -o ${outpath}qc/
 ```
