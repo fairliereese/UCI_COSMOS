@@ -302,7 +302,7 @@ You only need to change one line to output the results in your personal director
 
 # Useful links
 [How to use vi](https://www.tutorialspoint.com/unix/unix-vi-editor.htm)  
-[Bash shell script tutorial](https://linuxconfig.org/bash-scripting-tutorial-for-beginners)
+[Bash shell script tutorial](https://linuxconfig.org/bash-scripting-tutorial-for-beginners)  
 [UCI HPC3 page](https://rcic.uci.edu/hpc3/index.html)  
 [Long but thorough Unix tutorial](https://www.meted.ucar.edu/ucar/unix/navmenu.php)  
 [Google is your best friend](https://www.google.com/)  
