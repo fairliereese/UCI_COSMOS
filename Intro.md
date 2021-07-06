@@ -256,13 +256,13 @@ fastqc ${inpath}${sample}_R1.fastq.gz ${inpath}${sample}_R2.fastq.gz -o ${outpat
 Altogether, this is our array job for fastq QC:
 ```
 #!/bin/bash
-#SBATCH --job-name=fastqc         ## Name of the job
-#SBATCH -p free                   ## partition/queue name
-#SBATCH --nodes=1                 ## (-N) number of nodes to use
-#SBATCH --array=1-3               ## number of tasks to launch (number of samples)
-#SBATCH --cpus-per-task=1         ## number of cores the job needs
-#SBATCH --output=fastqc-%J.out    ## output log file
-#SBATCH --error=fastqc-%J.err     ## error log file
+#SBATCH --job-name=fastqc       
+#SBATCH -p free                  
+#SBATCH --nodes=1                
+#SBATCH --array=1-3              
+#SBATCH --cpus-per-task=1        
+#SBATCH --output=fastqc-%J.out   
+#SBATCH --error=fastqc-%J.err    
 
 module load fastqc
 
