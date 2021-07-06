@@ -72,6 +72,7 @@ That last one will give you an error - `rm: cannot remove ‘new_folder/’: Is 
 -`.` represents the directory you're currently in  
 -**Tab to complete!** Get used to pressing the tab button all the time! It works for files, directories, commands, options within commands, etc.  
 -**Display the manual page for any command using `man`!** For example, `man rm`.
+-**The up arrow is your friend to an extent.** If you run more than one command to process a file, start taking notes (and use `|`), your future self will thank you. You wouldn't follow a wet lab protocol without it being written down and the same applies to an analysis protocol! 
 
 # Practice using the Unix text editor
 
