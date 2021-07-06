@@ -234,7 +234,7 @@ This is where it gets interesting. Try entering the following in the command lin
 
 ```
 file=samples.txt 
-inpath=`head -n $SLURM_ARRAY_TASK_ID  $file | tail -n 1`
+inpath=`head -n $SLURM_ARRAY_TASK_ID $file | tail -n 1`
 sample=`basename $inpath`
 ```
 
@@ -247,7 +247,7 @@ sample=`basename $inpath`
 The last two are the path to the full compressed read 1 and read 2 fastqs for the first sample. If you try 2, the paths will be pointed towards the second sample in samples.txt, the third sample for 3, etc. This is exactly what will happen in each arrayed job; the `SLURM_ARRAY_TASK_ID` will range from whatever numbers you enter into `--array=`.
 
 ```
-inpath=`head -n 2  $file | tail -n 1`
+inpath=`head -n 2 $file | tail -n 1`
 sample=`basename $inpath` # basename is a useful little command for the way I like to organize my data
 echo ${inpath}${sample}_R1.fastq.gz
 echo ${inpath}${sample}_R2.fastq.gz
@@ -274,14 +274,14 @@ module load fastqc
 outpath=/data/homezvol2/erebboah/c2c12_rnaseq_timecourse/
 
 file=samples.txt 
-inpath=`head -n $SLURM_ARRAY_TASK_ID  $file | tail -n 1`
+inpath=`head -n $SLURM_ARRAY_TASK_ID $file | tail -n 1`
 sample=`basename $inpath`
 
 fastqc ${inpath}${sample}_R1.fastq.gz ${inpath}${sample}_R2.fastq.gz -o ${outpath}qc/
 ```
 
 ## Run fastqc bash script
-Make a new file and copy-paste the above code. Play around with which samples to QC check (`--array=` can be anything from 1-35). Submit the job to SLURM by `sbatch your_fastqc_job.sh` and check its status by `squeue -u $USER` (or your username, `squeue -u erebboah`).
+Make a new file and copy-paste the above code. Play around with which samples to QC check (`--array=` can be anything from 1-35). Submit the job to SLURM by `sbatch your_fastqc_job.sh` and check its status by `squeue -u $USER` (or your username, `squeue -u erebboah`). Check the contents of the `.out` and `.err` files.
 
 ## Run mapping bash script
 
