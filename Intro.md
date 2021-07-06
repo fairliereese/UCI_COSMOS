@@ -172,32 +172,116 @@ small_R2_fastqc.zip
 small_R2_fastqc.html
 ```
 
-Unfortunately HPC no longer supports a web server you can copy the `html` files to, but these are what they look like if you copy them over to your local computer and open them: [R1](http://crick.bio.uci.edu/erebboah/cosmos/small_R1_fastqc.html), [R2](http://crick.bio.uci.edu/erebboah/cosmos/small_R2_fastqc.html).
+If you copy the `html` files over to your local computer and open them, they look like this: [R1](http://crick.bio.uci.edu/erebboah/cosmos/small_R1_fastqc.html), [R2](http://crick.bio.uci.edu/erebboah/cosmos/small_R2_fastqc.html).
+
+So far we've just been playing around without setting up any kind of directory structure. Everyone has a different organizational structure, but a basic directory structure for an RNA-seq project could look like this:
+```
+c2c12_rnaseq_timecourse/
+	fastq/ 
+	qc/
+	mapped/
+	counts/
+	figures/
+	scripts/
+```
+We just need `qc` for now. 
+
+Use the `-o` option to output the results to the `qc` directory.
+```
+mkdir -p c2c12_rnaseq_timecourse/qc
+fastqc small_R1.fastq small_R2.fastq -o c2c12_rnaseq_timecourse/qc
+```
+
+You can make variables in bash just like any other programming language. When you want bash to expand an environment variable, it needs $ in front of it. Let's make the output directory a variable so we don't have to keep typing it:
+```
+outpath=c2c12_rnaseq_timecourse/qc
+fastqc small_R1.fastq small_R2.fastq -o $outpath
+```
+
+There are `ls /pub/erebboah/cosmos/C2C12_bulkRNA_timecourse/fastq | wc -l` 35 samples in the C2C12 bulk timecourse, so it would be tedious to run the `fastqc` line over and over. Job arrays can launch multiple scripts all at once for different samples. I like to make use of a `samples.txt` file in the same directory as my script with the locations of the samples I want to process at once.  
+
+```
+mkdir c2c12_rnaseq_timecourse/scripts
+cd c2c12_rnaseq_timecourse/scripts
+ls -d /pub/erebboah/cosmos/C2C12_bulkRNA_timecourse/fastq/*/ > samples.txt
+cat samples.txt
+```
+
+There are some [lines](https://hpc-support.lboro.ac.uk/slurm-nodes-cpus-tasks.html) to add to the header that begin with `#SBATCH` to tell SLURM which partition to use, how many nodes to use, how many cores of each node to use, and how many tasks to launch, in addition to the optional job name and output/error log files. [More helpful info](https://hpc-support.lboro.ac.uk/slurm-job-scripts.html). This is computationally inexpensive and quick so I'm using the minimum number of nodes and cores and the free partition and risking my jobs getting killed. `#SBATCH --array=1-3` means I'm only going to process the first 3 samples in samples.txt, for testing/demo purposes.
 
 ```
 #!/bin/bash
 #SBATCH --job-name=fastqc         ## Name of the job
 #SBATCH -p free                   ## partition/queue name
 #SBATCH --nodes=1                 ## (-N) number of nodes to use
+#SBATCH --array=1-3               ## number of tasks to launch (number of samples)
+#SBATCH --cpus-per-task=1         ## number of cores the job needs
+#SBATCH --output=fastqc-%J.out    ## output log file
+#SBATCH --error=fastqc-%J.err     ## error log file
+```
+
+Even if fastqc is loaded, you still need to tell the job to load it. 
+```
+module load fastqc
+```
+
+We did this before, but it's a good idea to include **full paths** instead of relative paths in your job scripts.
+```
+outpath=/data/homezvol2/erebboah/c2c12_rnaseq_timecourse/
+```
+
+This is where it gets interesting. Try entering the following in the command line, except replacing [`$SLURM_ARRAY_TASK_ID`](https://slurm.schedmd.com/job_array.html) (which is a variable that gets automatically created) with 1. 
+
+```
+file=samples.txt 
+inpath=`head -n $SLURM_ARRAY_TASK_ID  $file | tail -n 1`
+sample=`basename $inpath`
+```
+
+### What do these commands output?
+1. `echo $inpath`
+2. `echo $sample`
+3. `echo ${inpath}${sample}_R1.fastq.gz`
+4. `echo ${inpath}${sample}_R2.fastq.gz`
+
+The last two are the path to the full compressed read 1 and read 2 fastqs for the first sample. If you try 2, the paths will be pointed towards the second sample in samples.txt, the third sample for 3, etc. This is exactly what will happen in each arrayed job; the `SLURM_ARRAY_TASK_ID` will range from whatever numbers you enter into `--array=`.
+
+```
+inpath=`head -n 2  $file | tail -n 1`
+sample=`basename $inpath` # basename is a useful little command for the way I like to organize my data
+echo ${inpath}${sample}_R1.fastq.gz
+echo ${inpath}${sample}_R2.fastq.gz
+```
+
+The new line to run fastqc looks like this:
+```
+fastqc ${inpath}${sample}_R1.fastq.gz ${inpath}${sample}_R2.fastq.gz -o ${outpath}qc/
+```
+
+Altogether, this is our array job for fastq QC:
+```
+#!/bin/bash
+#SBATCH --job-name=fastqc         ## Name of the job
+#SBATCH -p free                   ## partition/queue name
+#SBATCH --nodes=1                 ## (-N) number of nodes to use
+#SBATCH --array=1-3               ## number of tasks to launch (number of samples)
 #SBATCH --cpus-per-task=1         ## number of cores the job needs
 #SBATCH --output=fastqc-%J.out    ## output log file
 #SBATCH --error=fastqc-%J.err     ## error log file
 
 module load fastqc
 
-inpath=/pub/erebboah/cosmos/C2C12_bulkRNA_timecourse/
-outpath=/data/homezvol2/erebboah/c2c12_timecourse/
-sample=$1
+outpath=/data/homezvol2/erebboah/c2c12_rnaseq_timecourse/
 
-read_1=${inpath}/fastq/${sample}/*_R1.fastq.gz 
-read_2=${inpath}/fastq/${sample}/*_R2.fastq.gz 
+file=samples.txt 
+inpath=`head -n $SLURM_ARRAY_TASK_ID  $file | tail -n 1`
+sample=`basename $inpath`
 
-mkdir ${outpath}fastqc/
-mkdir ${outpath}fastqc/${sample}
-
-fastqc ${inpath}fastq/${sample}/${sample}_R1.fastq.gz ${inpath}fastq/${sample}/${sample}_R2.fastq.gz -o \
-	${outpath}fastqc/${sample}
+fastqc ${inpath}${sample}_R1.fastq.gz ${inpath}${sample}_R2.fastq.gz -o ${outpath}qc/
 ```
+
+### Run fastqc bash script
+Make a new file and copy-paste the above code.
 
 # Day 1 Goals
 - Log on to HPC3
