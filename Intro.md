@@ -154,7 +154,7 @@ samtools view /pub/erebboah/cosmos/example_files/Ctrl_0hr_A_Aligned.sortedByCoor
 While the shell script `myscript.sh` we made is executable, it doesn't have enough details to be a proper job that we submit to the HPC scheduler. There are two main types of job schedulers, [SLURM and SGE](https://srcc.stanford.edu/sge-slurm-conversion); we are using SLURM (so named to reference the soda in Futurama).
 
 <div>
-<img src="slurm.png" width="200"/>
+<img src="slurm2.png" width="200"/>
 </div>
 
 ```
