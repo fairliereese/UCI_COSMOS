@@ -318,7 +318,13 @@ mkdir ${outpath}${sample}/
 
 kallisto quant -i $index -o $outpath${sample} ${inpath}${sample}_R1.fq.gz ${inpath}${sample}_R2.fq.gz
 ```
-You only need to change one line to output the results in your personal directory! (And `--array=1-2`; make sure it works first then feel free to map all 8 `--array=1-8`).
+You only need to change one line to output the results in your personal directory! The line `mkdir ${outpath}${sample}/` will make a new directory for each of the 8 samples with the following 3 output files per sample:
+```
+abundance.h5
+abundance.tsv
+run_info.json
+```
+`run_info.json` has information about the run, including the percent pseudoaligned (p_pseudoaligned) and number of reads processed (n_processed). All the samples had ~15 million input reads with >85% percent pseudoaligned.
 
 # Day 1 Goals
 - Log on to HPC3
