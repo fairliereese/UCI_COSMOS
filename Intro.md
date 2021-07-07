@@ -186,7 +186,7 @@ fshd_rnaseq/
 	ref/
 	fastq/ 
 	qc/
-	mapped/
+	kallisto_output/ (or star_output/)
 	counts/
 	figures/
 	scripts/
@@ -305,7 +305,7 @@ It looks pretty similar to the fastqc script, but instead of the fastqc command 
 module load kallisto
 
 input=/pub/namvn1/COSMO/RNA_Seq/
-output=/pub/erebboah/cosmos/FSHD_bulkRNA/mapped/
+output=/pub/erebboah/cosmos/FSHD_bulkRNA/kallisto_output/
 sample=`head -n $SLURM_ARRAY_TASK_ID prefixes.txt | tail -n 1`
 
 index=/pub/erebboah/cosmos/FSHD_bulkRNA/ref/hg38.idx
@@ -332,7 +332,7 @@ cp /pub/namvn1/COSMO/RNA_Seq/run_STAR.sh .
 vi run_STAR.sh
 ```
 
-This script looks more complicated but the basic structure is the same. We have the same header including the `--array=1-8 option`, (please change kyokomor_lab to cosmos2021), module load the STAR aligner, setup our input and output paths and sample prefix. STAR is known for its multitude of options and is highly customizable. Once again, you only need to change one line in order to output to somewhere (like `/data/homezvol2/username/fshd_rnaseq/mapped/`) in your home directory.
+This script looks more complicated but the basic structure is the same. We have the same header including the `--array=1-8 option`, (please change kyokomor_lab to cosmos2021), module load the STAR aligner, setup our input and output paths and sample prefix. STAR is known for its multitude of options and is highly customizable. Once again, you only need to change one line in order to output to somewhere (like `/data/homezvol2/username/fshd_rnaseq/star_output/`) in your home directory.
 ```
 #!/bin/bash
 #SBATCH -A kyokomor_lab
