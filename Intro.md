@@ -292,7 +292,7 @@ cp /pub/erebboah/cosmos/fshd_rnaseq/scripts/run_kallisto.sh .
 vi run_kallisto.sh
 ```
 
-It looks pretty similar to the fastqc script and there is only one line to execute (kallisto quant):
+It looks pretty similar to the fastqc script and there is only one line to execute ([kallisto quant](https://pachterlab.github.io/kallisto/manual)):
 ```
 #!/bin/bash
 #SBATCH --job-name=kallisto       
