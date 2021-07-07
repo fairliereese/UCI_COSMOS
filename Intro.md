@@ -291,6 +291,33 @@ cd fshd_rnaseq/scripts
 cp /pub/erebboah/cosmos/fshd_rnaseq/scripts/run_kallisto.sh .
 vi run_kallisto.sh
 ```
+
+It looks pretty similar to the fastqc script and there is only one line to execute (kallisto quant):
+```
+#!/bin/bash
+#SBATCH --job-name=kallisto       
+#SBATCH -A cosmos2021             
+#SBATCH -p standard              
+#SBATCH --array=1-8              
+#SBATCH --nodes=1                 
+#SBATCH --cpus-per-task=8        
+#SBATCH --output=kallisto-%J.out 
+#SBATCH --error=kallisto-%J.err 
+
+module load kallisto
+
+inpath=/pub/namvn1/COSMO/RNA_Seq/
+outpath=/pub/erebboah/cosmos/FSHD_bulkRNA/mapped/
+
+file=prefixes.txt 
+sample=`head -n $SLURM_ARRAY_TASK_ID $file | tail -n 1`
+
+index=/pub/erebboah/cosmos/FSHD_bulkRNA/ref/hg38.idx
+
+mkdir ${outpath}${sample}/
+
+kallisto quant -i $index -o $outpath${sample} ${inpath}${sample}_R1.fq.gz ${inpath}${sample}_R2.fq.gz
+```
 You only need to change one line to output the results in your personal directory! (And `--array=1-2`; make sure it works first then feel free to map all 8 `--array=1-8`).
 
 # Day 1 Goals
