@@ -318,7 +318,9 @@ mkdir ${outpath}${sample}/
 
 kallisto quant -i $index -o $outpath${sample} ${inpath}${sample}_R1.fq.gz ${inpath}${sample}_R2.fq.gz
 ```
-You only need to change one line to output the results in your personal directory! The line `mkdir ${outpath}${sample}/` will make a new directory for each of the 8 samples with the following 3 output files per sample:
+You only need to change one line in this script in order to output the results in your personal directory! 
+
+The line `mkdir ${outpath}${sample}/` will make a new directory for each of the 8 samples with the following 3 output files per sample:
 ```
 abundance.h5
 abundance.tsv
