@@ -186,7 +186,7 @@ fshd_rnaseq/
 	ref/
 	fastq/ 
 	qc/
-	mapped/
+	kallisto_output/ (or star_output/)
 	counts/
 	figures/
 	scripts/
@@ -201,8 +201,8 @@ fastqc small_R1.fastq small_R2.fastq -o fshd_rnaseq/qc
 
 You can make variables in bash just like any other programming language. When you want bash to expand an environment variable, it needs $ in front of it. Let's make the output directory a variable so we don't have to keep typing it:
 ```
-outpath=fshd_rnaseq/qc
-fastqc small_R1.fastq small_R2.fastq -o $outpath
+output=fshd_rnaseq/qc
+fastqc small_R1.fastq small_R2.fastq -o $output
 ```
 
 There are `ls /pub/namvn1/COSMO/RNA_Seq/*.fq.gz| wc -l` 16 fastqs (8 samples) in the FSHD experiment, so it would be tedious to run the `fastqc` line over and over. Job arrays can launch multiple scripts all at once for different samples. We will make use of a `samples.txt` file in the same directory as our scripts with the names of the samples we want to process at once.  
@@ -231,28 +231,27 @@ module load fastqc
 
 We did this before, but it's a good idea to include **full paths** instead of relative paths in your job scripts.
 ```
-outpath=/data/homezvol2/erebboah/fshd_rnaseq/
+output=/data/homezvol2/erebboah/fshd_rnaseq/
 ```
 
 This is where it gets interesting. Try entering the following in the command line, except replacing [`$SLURM_ARRAY_TASK_ID`](https://slurm.schedmd.com/job_array.html) (which is a variable that gets automatically created) with 1. 
 
 ```
-file=prefixes.txt 
-inpath=/pub/namvn1/COSMO/RNA_Seq/
-sample=`head -n $SLURM_ARRAY_TASK_ID $file | tail -n 1`
+input=/pub/namvn1/COSMO/RNA_Seq/
+sample=`head -n $SLURM_ARRAY_TASK_ID prefixes.txt | tail -n 1`
 ```
 
 ### What do these commands output?
 1. `echo $inpath`
 2. `echo $sample`
-3. `echo ${inpath}${sample}_R1.fq.gz`
-4. `echo ${inpath}${sample}_R2.fq.gz`
+3. `echo ${input}${sample}_R1.fq.gz`
+4. `echo ${input}${sample}_R2.fq.gz`
 
 The last two are the path to the full compressed read 1 and read 2 fastqs for the first sample. If you try 2, the paths will be pointed towards the second sample in samples.txt, the third sample for 3, etc. This is exactly what will happen in each arrayed job; the `SLURM_ARRAY_TASK_ID` will range from whatever numbers you enter into `--array=`.
 
 The new line to run fastqc looks like this:
 ```
-fastqc ${inpath}${sample}_R1.fastq.gz ${inpath}${sample}_R2.fastq.gz -o ${outpath}qc/
+fastqc ${input}${sample}_R1.fastq.gz ${input}${sample}_R2.fastq.gz -o ${output}qc/
 ```
 
 Altogether, this is our array job for fastq QC:
@@ -268,29 +267,112 @@ Altogether, this is our array job for fastq QC:
 
 module load fastqc
 
-inpath=/pub/namvn1/COSMO/RNA_Seq/
-outpath=/data/homezvol2/erebboah/fshd_rnaseq/
+input=/pub/namvn1/COSMO/RNA_Seq/
+output=/data/homezvol2/erebboah/fshd_rnaseq/
 
-file=prefixes.txt 
 inpath=/pub/namvn1/COSMO/RNA_Seq/
-sample=`head -n $SLURM_ARRAY_TASK_ID $file | tail -n 1`
+sample=`head -n $SLURM_ARRAY_TASK_ID prefixes.txt  | tail -n 1`
 
-fastqc ${inpath}${sample}_R1.fq.gz ${inpath}${sample}_R2.fq.gz -o ${outpath}qc/
+fastqc ${input}${sample}_R1.fq.gz ${input}${sample}_R2.fq.gz -o ${output}qc/
 ```
 
 ## Run fastqc bash script
 Make a new file and copy-paste the above code. Play around with which samples to QC check (`--array=` can be anything from 1-35). Submit the job to SLURM by `sbatch your_fastqc_job.sh` and check its status by `squeue -u $USER` (or your username, `squeue -u erebboah`). Check the contents of the `.out` and `.err` files.
 
 ## Run mapping bash script
-We have two scripts to align bulk RNA-seq data here: `/pub/namvn1/COSMO/RNA_Seq/run_STAR.sh` and here: `/pub/erebboah/cosmos/FSHD_bulkRNA/scripts/run_kallisto.sh`. One uses the [STAR](https://github.com/alexdobin/STAR) aligner with and one uses the [kallisto](https://pachterlab.github.io/kallisto/about) pseudo-aligner. We have a human STAR index already made here `/pub/namvn1/COSMO/genome_ref/hg38` and a human kallisto index already made here `/pub/erebboah/cosmos/FSHD_bulkRNA/ref/hg38.idx` for you to use.
+We have two scripts to align bulk RNA-seq data here: `/pub/namvn1/COSMO/RNA_Seq/run_STAR.sh` and here: `/pub/erebboah/cosmos/FSHD_bulkRNA/scripts/run_kallisto.sh`. One uses the [STAR](https://github.com/alexdobin/STAR) aligner with and one uses the [kallisto](https://pachterlab.github.io/kallisto/about) pseudo-aligner. We have a human STAR index already made here `/pub/namvn1/COSMO/genome_ref/hg38_star2.7` and a human kallisto index already made here `/pub/erebboah/cosmos/FSHD_bulkRNA/ref/hg38.idx` for you to use.
 
 #### Kallisto script:
 ```
+# Copy the script to your directory to modify it (or make a new file and copy paste the script below)
 cd fshd_rnaseq/scripts
 cp /pub/erebboah/cosmos/fshd_rnaseq/scripts/run_kallisto.sh .
 vi run_kallisto.sh
 ```
-You only need to change one line to output the results in your personal directory! (And `--array=1-2`; make sure it works first then feel free to map all 8 `--array=1-8`).
+
+It looks pretty similar to the fastqc script, but instead of the fastqc command we use ([kallisto quant](https://pachterlab.github.io/kallisto/manual)) from the kallisto package:
+```
+#!/bin/bash
+#SBATCH --job-name=kallisto       
+#SBATCH -A cosmos2021             
+#SBATCH -p standard              
+#SBATCH --array=1-8              
+#SBATCH --nodes=1                 
+#SBATCH --cpus-per-task=8        
+#SBATCH --output=kallisto-%J.out 
+#SBATCH --error=kallisto-%J.err 
+
+module load kallisto
+
+input=/pub/namvn1/COSMO/RNA_Seq/
+output=/pub/erebboah/cosmos/FSHD_bulkRNA/kallisto_output/
+sample=`head -n $SLURM_ARRAY_TASK_ID prefixes.txt | tail -n 1`
+
+index=/pub/erebboah/cosmos/FSHD_bulkRNA/ref/hg38.idx
+
+mkdir ${outpath}${sample}/
+
+kallisto quant -i $index -o $output${sample} ${input}${sample}_R1.fq.gz ${input}${sample}_R2.fq.gz
+```
+You only need to change one line in this script in order to output the results in your personal directory! 
+
+The line `mkdir ${outpath}${sample}/` will make a new directory for each of the 8 samples with the following 3 output files per sample:
+```
+abundance.h5
+abundance.tsv
+run_info.json
+```
+`run_info.json` has information about the run, including the percent pseudoaligned (p_pseudoaligned) and number of reads processed (n_processed). All the samples should have ~15 million input reads with >85% percent pseudoaligned.
+
+#### STAR script:
+```
+# Copy the script to your directory to modify it (or make a new file and copy paste the script below)
+cd fshd_rnaseq/scripts
+cp /pub/namvn1/COSMO/RNA_Seq/run_STAR.sh .
+vi run_STAR.sh
+```
+
+This script looks more complicated but the basic structure is the same. We have the same header including the `--array=1-8 option`, (please change kyokomor_lab to cosmos2021), module load the STAR aligner, setup our input and output paths and sample prefix. STAR is known for its multitude of options and is highly customizable. Once again, you only need to change one line in order to output to somewhere (like `/data/homezvol2/username/fshd_rnaseq/star_output/`) in your home directory.
+```
+#!/bin/bash
+#SBATCH -A kyokomor_lab
+#SBATCH --job-name=STAR 
+#SBATCH -p standard
+#SBATCH --array=1-8
+#SBATCH --cpus-per-task=16
+#SBATCH -e %x.e%A_%a 
+#SBATCH -o %x.o%A_%a
+
+
+module load star/2.7.3a
+
+input="/pub/namvn1/COSMO/RNA_Seq/"
+output="/pub/namvn1/COSMO/RNA_Seq/STAR_output/"
+prefix=`head -n $SLURM_ARRAY_TASK_ID prefixes.txt | tail -n 1`
+
+
+STAR \
+--runThreadN 16 --genomeDir /pub/namvn1/COSMO/genome_ref/hg38_star2.7/ \
+--readFilesIn $input/${prefix}_R1.fq.gz $input/${prefix}_R2.fq.gz \
+--readFilesCommand zcat --sjdbGTFfile /pub/namvn1/COSMO/genome_ref/hg38/gencode.v28.basic.annotation.pclnc.gtf \
+--outFileNamePrefix $output/${prefix} \
+--outFilterMismatchNmax 10 --outFilterMismatchNoverReadLmax 0.07 --outFilterMultimapNmax 10 \
+--outSAMunmapped None --alignIntronMax 1000000 --alignIntronMin 20 --alignMatesGapMax 1000000 \
+--outSAMtype BAM SortedByCoordinate --quantMode TranscriptomeSAM --alignSJoverhangMin 8 \
+--alignSJDBoverhangMin 1 --sjdbScore 1 --outWigType wiggle --outWigStrand Unstranded --outWigNorm RPM
+```
+There are several output folders/files per sample. The one we will use to calculate expression is `*Aligned.toTranscriptome.out.bam`.
+```
+FSHD2_19_Day_3_Rep2Aligned.sortedByCoord.out.bam
+FSHD2_19_Day_3_Rep2Aligned.toTranscriptome.out.bam
+FSHD2_19_Day_3_Rep2Log.final.out
+FSHD2_19_Day_3_Rep2Log.out
+FSHD2_19_Day_3_Rep2Log.progress.out
+FSHD2_19_Day_3_Rep2Signal.UniqueMultiple.str1.out.wig
+FSHD2_19_Day_3_Rep2Signal.Unique.str1.out.wig
+FSHD2_19_Day_3_Rep2SJ.out.tab
+FSHD2_19_Day_3_Rep2_STARgenome/
+```
 
 # Day 1 Goals
 - Log on to HPC3
@@ -308,4 +390,5 @@ You only need to change one line to output the results in your personal director
 [Bash shell script tutorial](https://linuxconfig.org/bash-scripting-tutorial-for-beginners)  
 [UCI HPC3 page](https://rcic.uci.edu/hpc3/index.html)  
 [Long but thorough Unix tutorial](https://www.meted.ucar.edu/ucar/unix/navmenu.php)  
+[STAR guide/more info](https://hbctraining.github.io/Intro-to-rnaseq-hpc-O2/lessons/03_alignment.html)  
 [Google is your best friend](https://www.google.com/)  
