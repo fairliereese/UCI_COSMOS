@@ -187,7 +187,7 @@ fshd_rnaseq/
 	fastq/ 
 	qc/
 	kallisto_output/ (or star_output/)
-	counts/
+	kallisto_counts/ (or star_counts/)
 	figures/
 	scripts/
 ```
