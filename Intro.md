@@ -324,7 +324,7 @@ abundance.h5
 abundance.tsv
 run_info.json
 ```
-`run_info.json` has information about the run, including the percent pseudoaligned (p_pseudoaligned) and number of reads processed (n_processed). All the samples had ~15 million input reads with >85% percent pseudoaligned.
+`run_info.json` has information about the run, including the percent pseudoaligned (p_pseudoaligned) and number of reads processed (n_processed). All the samples should have ~15 million input reads with >85% percent pseudoaligned.
 
 # Day 1 Goals
 - Log on to HPC3
