@@ -332,7 +332,7 @@ cp /pub/namvn1/COSMO/RNA_Seq/run_STAR.sh .
 vi run_STAR.sh
 ```
 
-This script looks more complicated but the basic structure is the same. We have the same header including the `--array=1-8 option`, (please change kyokomor_lab to cosmos2021), module load the STAR aligner, setup our input and output paths and sample prefix. STAR is known for its multitude of options and is highly customizable.
+This script looks more complicated but the basic structure is the same. We have the same header including the `--array=1-8 option`, (please change kyokomor_lab to cosmos2021), module load the STAR aligner, setup our input and output paths and sample prefix. STAR is known for its multitude of options and is highly customizable. Once again, you only need to change one line in order to output to somewhere (like `/data/homezvol2/username/fshd_rnaseq/mapped/`) in your home directory.
 ```
 #!/bin/bash
 #SBATCH -A kyokomor_lab
@@ -361,7 +361,18 @@ STAR \
 --outSAMtype BAM SortedByCoordinate --quantMode TranscriptomeSAM --alignSJoverhangMin 8 \
 --alignSJDBoverhangMin 1 --sjdbScore 1 --outWigType wiggle --outWigStrand Unstranded --outWigNorm RPM
 ```
-
+There are several output folders/files per sample. The one we will use to calculate expression is `*Aligned.toTranscriptome.out.bam`.
+```
+FSHD2_19_Day_3_Rep2Aligned.sortedByCoord.out.bam
+FSHD2_19_Day_3_Rep2Aligned.toTranscriptome.out.bam
+FSHD2_19_Day_3_Rep2Log.final.out
+FSHD2_19_Day_3_Rep2Log.out
+FSHD2_19_Day_3_Rep2Log.progress.out
+FSHD2_19_Day_3_Rep2Signal.UniqueMultiple.str1.out.wig
+FSHD2_19_Day_3_Rep2Signal.Unique.str1.out.wig
+FSHD2_19_Day_3_Rep2SJ.out.tab
+FSHD2_19_Day_3_Rep2_STARgenome/
+```
 
 # Day 1 Goals
 - Log on to HPC3
@@ -379,4 +390,5 @@ STAR \
 [Bash shell script tutorial](https://linuxconfig.org/bash-scripting-tutorial-for-beginners)  
 [UCI HPC3 page](https://rcic.uci.edu/hpc3/index.html)  
 [Long but thorough Unix tutorial](https://www.meted.ucar.edu/ucar/unix/navmenu.php)  
+[STAR guide/more info](https://hbctraining.github.io/Intro-to-rnaseq-hpc-O2/lessons/03_alignment.html)  
 [Google is your best friend](https://www.google.com/)  
