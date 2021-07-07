@@ -286,6 +286,7 @@ We have two scripts to align bulk RNA-seq data here: `/pub/namvn1/COSMO/RNA_Seq/
 
 #### Kallisto script:
 ```
+# Copy the script to your directory to modify it
 cd fshd_rnaseq/scripts
 cp /pub/erebboah/cosmos/fshd_rnaseq/scripts/run_kallisto.sh .
 vi run_kallisto.sh
