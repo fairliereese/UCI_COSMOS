@@ -268,11 +268,16 @@ Altogether, this is our array job for fastq QC:
 
 module load fastqc
 
+# directory where all the raw data is stored
 input=/pub/namvn1/COSMO/RNA_Seq/
+
+# directory where you want the output to be stored (you need to change this!)
 output=/data/homezvol2/erebboah/fshd_rnaseq/
 
+# get the prefix for the file for this task array iteration
 sample=`head -n $SLURM_ARRAY_TASK_ID prefixes.txt  | tail -n 1`
 
+# run fastqc on read 1 and read 2 of the sample
 fastqc ${input}${sample}_R1.fq.gz ${input}${sample}_R2.fq.gz -o ${output}qc/
 ```
 
