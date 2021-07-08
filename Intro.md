@@ -342,3 +342,4 @@ run_info.json
 [Long but thorough Unix tutorial](https://www.meted.ucar.edu/ucar/unix/navmenu.php)  
 [STAR guide/more info](https://hbctraining.github.io/Intro-to-rnaseq-hpc-O2/lessons/03_alignment.html)  
 [Google is your best friend](https://www.google.com/)  
+[A classic](https://www.youtube.com/watch?v=zRny99Z_xrU)
