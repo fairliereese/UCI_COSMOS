@@ -1,0 +1,13 @@
+{
+	"n_targets": 207410,
+	"n_bootstraps": 0,
+	"n_processed": 14456677,
+	"n_pseudoaligned": 13593924,
+	"n_unique": 2536042,
+	"p_pseudoaligned": 94.0,
+	"p_unique": 17.5,
+	"kallisto_version": "0.46.2",
+	"index_version": 10,
+	"start_time": "Wed Jul  7 10:45:37 2021",
+	"call": "kallisto quant -i /pub/erebboah/cosmos/FSHD_bulkRNA/ref/hg38.idx -o /pub/erebboah/cosmos/FSHD_bulkRNA/mapped/FSHD2_19_Day_0_Rep2 /pub/namvn1/COSMO/RNA_Seq/FSHD2_19_Day_0_Rep2_R1.fq.gz /pub/namvn1/COSMO/RNA_Seq/FSHD2_19_Day_0_Rep2_R2.fq.gz"
+}

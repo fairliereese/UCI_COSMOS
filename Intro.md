@@ -187,7 +187,7 @@ fshd_rnaseq/
 	fastq/ 
 	qc/
 	kallisto_output/ (or star_output/)
-	counts/
+	kallisto_counts/ (or star_counts/)
 	figures/
 	scripts/
 ```
@@ -323,56 +323,6 @@ abundance.tsv
 run_info.json
 ```
 `run_info.json` has information about the run, including the percent pseudoaligned (p_pseudoaligned) and number of reads processed (n_processed). All the samples should have ~15 million input reads with >85% percent pseudoaligned.
-
-#### STAR script:
-```
-# Copy the script to your directory to modify it (or make a new file and copy paste the script below)
-cd fshd_rnaseq/scripts
-cp /pub/namvn1/COSMO/RNA_Seq/run_STAR.sh .
-vi run_STAR.sh
-```
-
-This script looks more complicated but the basic structure is the same. We have the same header including the `--array=1-8 option`, (please change kyokomor_lab to cosmos2021), module load the STAR aligner, setup our input and output paths and sample prefix. STAR is known for its multitude of options and is highly customizable. Once again, you only need to change one line in order to output to somewhere (like `/data/homezvol2/username/fshd_rnaseq/star_output/`) in your home directory.
-```
-#!/bin/bash
-#SBATCH -A kyokomor_lab
-#SBATCH --job-name=STAR 
-#SBATCH -p standard
-#SBATCH --array=1-8
-#SBATCH --cpus-per-task=16
-#SBATCH -e %x.e%A_%a 
-#SBATCH -o %x.o%A_%a
-
-
-module load star/2.7.3a
-
-input="/pub/namvn1/COSMO/RNA_Seq/"
-output="/pub/namvn1/COSMO/RNA_Seq/STAR_output/"
-prefix=`head -n $SLURM_ARRAY_TASK_ID prefixes.txt | tail -n 1`
-
-
-STAR \
---runThreadN 16 --genomeDir /pub/namvn1/COSMO/genome_ref/hg38_star2.7/ \
---readFilesIn $input/${prefix}_R1.fq.gz $input/${prefix}_R2.fq.gz \
---readFilesCommand zcat --sjdbGTFfile /pub/namvn1/COSMO/genome_ref/hg38/gencode.v28.basic.annotation.pclnc.gtf \
---outFileNamePrefix $output/${prefix} \
---outFilterMismatchNmax 10 --outFilterMismatchNoverReadLmax 0.07 --outFilterMultimapNmax 10 \
---outSAMunmapped None --alignIntronMax 1000000 --alignIntronMin 20 --alignMatesGapMax 1000000 \
---outSAMtype BAM SortedByCoordinate --quantMode TranscriptomeSAM --alignSJoverhangMin 8 \
---alignSJDBoverhangMin 1 --sjdbScore 1 --outWigType wiggle --outWigStrand Unstranded --outWigNorm RPM
-```
-There are several output folders/files per sample. The one we will use to calculate expression is `*Aligned.toTranscriptome.out.bam`.
-```
-FSHD2_19_Day_3_Rep2Aligned.sortedByCoord.out.bam
-FSHD2_19_Day_3_Rep2Aligned.toTranscriptome.out.bam
-FSHD2_19_Day_3_Rep2Log.final.out
-FSHD2_19_Day_3_Rep2Log.out
-FSHD2_19_Day_3_Rep2Log.progress.out
-FSHD2_19_Day_3_Rep2Signal.UniqueMultiple.str1.out.wig
-FSHD2_19_Day_3_Rep2Signal.Unique.str1.out.wig
-FSHD2_19_Day_3_Rep2SJ.out.tab
-FSHD2_19_Day_3_Rep2_STARgenome/
-```
 
 # Day 1 Goals
 - Log on to HPC3
