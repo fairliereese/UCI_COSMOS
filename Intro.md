@@ -132,6 +132,7 @@ These files aren't too big, so we can also display the entire fastq by `cat smal
 - `cat small_R1.fastq | head`
 - `head -n 20 small_R1.fastq`
 - `wc -l small_R1.fastq` (remember that I took the first 4000 lines of the original file)
+- `more small_R1.fastq` (type "q" to quit this view)
 
 ### Tips:
 - `|` is the pipe symbol which connects the output of one process to the input of another process  
