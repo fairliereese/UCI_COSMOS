@@ -132,6 +132,7 @@ These files aren't too big, so we can also display the entire fastq by `cat smal
 - `cat small_R1.fastq | head`
 - `head -n 20 small_R1.fastq`
 - `wc -l small_R1.fastq` (remember that I took the first 4000 lines of the original file)
+- `more small_R1.fastq` (type "q" to quit this view)
 
 ### Tips:
 - `|` is the pipe symbol which connects the output of one process to the input of another process  
@@ -267,12 +268,16 @@ Altogether, this is our array job for fastq QC:
 
 module load fastqc
 
+# directory where all the raw data is stored
 input=/pub/namvn1/COSMO/RNA_Seq/
+
+# directory where you want the output to be stored (you need to change this!)
 output=/data/homezvol2/erebboah/fshd_rnaseq/
 
-inpath=/pub/namvn1/COSMO/RNA_Seq/
+# get the prefix for the file for this task array iteration
 sample=`head -n $SLURM_ARRAY_TASK_ID prefixes.txt  | tail -n 1`
 
+# run fastqc on read 1 and read 2 of the sample
 fastqc ${input}${sample}_R1.fq.gz ${input}${sample}_R2.fq.gz -o ${output}qc/
 ```
 
@@ -342,3 +347,4 @@ run_info.json
 [Long but thorough Unix tutorial](https://www.meted.ucar.edu/ucar/unix/navmenu.php)  
 [STAR guide/more info](https://hbctraining.github.io/Intro-to-rnaseq-hpc-O2/lessons/03_alignment.html)  
 [Google is your best friend](https://www.google.com/)  
+[A classic](https://www.youtube.com/watch?v=zRny99Z_xrU)
